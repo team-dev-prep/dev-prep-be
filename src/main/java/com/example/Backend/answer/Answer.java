@@ -1,6 +1,7 @@
 package com.example.Backend.answer;
 
 import com.example.Backend.question.Question;
+import com.example.Backend.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,16 +17,16 @@ public class Answer {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY) //TODO 1차 목표 진행 시 User구현
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "userAnswer", nullable = false, columnDefinition = "LONGTEXT")
+    private String userAnswer;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -36,9 +37,10 @@ public class Answer {
         this.createdAt = new java.util.Date();
     }
 
-    public Answer(Question question, String content) {
+    public Answer(User user, Question question, String userAnswer) {
+        this.user = user;
         this.question = question;
-        this.content = content;
+        this.userAnswer = userAnswer;
         this.createdAt = new java.util.Date();
     }
 }

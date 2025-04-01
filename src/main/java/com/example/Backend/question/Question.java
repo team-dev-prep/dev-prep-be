@@ -14,17 +14,25 @@ public class Question {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "personality", nullable = false)
+    private Long personality;
+
+    @Column(name = "jobId", nullable = false)
     private Long jobId;
 
-    @Column(nullable = false)
+    @Column(name = "time", nullable = false)
+    private Long time;
+
+    @Column(name = "Question", nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
-    @Column(nullable = false)
+    @Column(name = "modelAnswer", nullable = false, columnDefinition = "LONGTEXT")
     private String modelAnswer;
 
-    public Question(Long jobId, String content, String modelAnswer) {
+    public Question(Long personality, Long jobId, Long time, String content, String modelAnswer) {
+        this.personality = personality;
         this.jobId = jobId;
+        this.time = time;
         this.content = content;
         this.modelAnswer = modelAnswer;
     }
