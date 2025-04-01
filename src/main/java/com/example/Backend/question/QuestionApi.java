@@ -1,14 +1,17 @@
 package com.example.Backend.question;
 
 
+import com.example.Backend.dto.QuestionRequestDto;
+import com.example.Backend.dto.QuestionResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,22 +19,24 @@ public class QuestionApi {
 
     private final QuestionService questionService;
 
-    @PostMapping("/question") //TODO 질문 등록을 위한 API 입니다. 1차 목표 진행 시 데이터베이스 만들 때 사용 예정
+    @Operation(summary = "질문 가져오는 API", description = "인성과 기술 질문을 보내주면 수량에 맞게 질문을 보내줍니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "응답 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PostMapping("/question")
+    public QuestionResponseDto requestQuestions(@RequestBody QuestionRequestDto requestDto) {
+        return questionService.createUserAndGetQuestions(requestDto);
+    }
+
+    @Operation(summary = "질문 저장", description = "데이터 베이스 구축을 위한 질문 저장 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "질문 저장 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PostMapping("/register") //TODO 데이터베이스 만들 때 사용할 질문 등록을 위한 API 입니다.
     public ResponseEntity<Question> saveQuestion(@RequestBody Question question) {
         Question savedQuestion = questionService.saveQuestion(question);
         return new ResponseEntity<>(savedQuestion, HttpStatus.CREATED);
-    }
-
-    @Operation(summary = "질문 조회", description = "질문의 ID 값으로 해당 질문 내용을 조회합니다.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "질문 조회 성공"),
-        @ApiResponse(responseCode = "404", description = "질문을 찾을 수 없습니다")
-    })
-    @GetMapping("/interview/{id}")
-    public ResponseEntity<Question> getQuestion(
-            @Parameter(description = "조회할 질문의 ID, MVP 개발 중이므로 현재는 1번만 가능합니다.") @PathVariable("id") Long id) {
-        return questionService.getQuestion(id)
-                .map(question -> new ResponseEntity<>(new Question(null, question.getContent(), null), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
