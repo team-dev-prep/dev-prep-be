@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 public class ResultApi {
@@ -25,9 +23,9 @@ public class ResultApi {
             @ApiResponse(responseCode = "404", description = "사용자 답변 없음")
     })
     @GetMapping("/result")
-    public ResponseEntity<List<ResultResponseDto>> getResult(
+    public ResponseEntity<ResultResponseDto> getResult(
             @Parameter(description = "사용자 ID", example = "1") @RequestParam Long userId) {
-        List<ResultResponseDto> results = resultService.getUserResults(userId);
+        ResultResponseDto results = resultService.getUserResults(userId);
         return ResponseEntity.ok(results);
     }
 }
