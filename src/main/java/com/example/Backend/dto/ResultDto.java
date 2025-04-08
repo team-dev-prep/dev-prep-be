@@ -1,4 +1,4 @@
-package com.example.Backend.result;
+package com.example.Backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

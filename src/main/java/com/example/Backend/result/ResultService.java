@@ -2,6 +2,7 @@ package com.example.Backend.result;
 
 import com.example.Backend.answer.Answer;
 import com.example.Backend.answer.AnswerRepository;
+import com.example.Backend.dto.ResultDto;
 import com.example.Backend.dto.ResultResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

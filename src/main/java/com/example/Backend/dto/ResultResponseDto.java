@@ -1,6 +1,5 @@
 package com.example.Backend.dto;
 
-import com.example.Backend.result.ResultDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
