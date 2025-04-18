@@ -49,6 +49,28 @@ public class AuthApi {
         return ResponseEntity.ok(Map.of("message", "Login success"));
     }
 
+    @PostMapping("/github/callback")
+    public ResponseEntity<?> githubCallbackViaPost(@RequestBody Map<String, String> payload, HttpServletResponse response) {
+        String code = payload.get("code");
+
+        String accessToken = authService.getAccessToken(code);
+        User user = authService.getUserInfoAndSave(accessToken);
+
+        String jwtAccess = jwtUtil.generateAccessToken(user.getId().toString());
+        String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
+
+        ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccess)
+                .httpOnly(true).secure(false).sameSite("None").path("/").maxAge(1800).build();
+
+        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefresh)
+                .httpOnly(true).secure(false).sameSite("None").path("/").maxAge(604800).build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+        return ResponseEntity.ok(Map.of("message", "Login success"));
+    }
+
     @Operation(summary = "GitHub Login", description = "GitHub OAuth 코드를 처리하여 사용자를 인증하고 JWT 토큰을 생성하며 쿠키를 설정합니다.")
         @ApiResponses({
                 @ApiResponse(responseCode = "200", description = "Login successful"),
