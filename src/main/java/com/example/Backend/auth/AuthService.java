@@ -30,6 +30,7 @@ public class AuthService {
         String url = "https://github.com/login/oauth/access_token";
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("client_id", clientId);
@@ -43,12 +44,15 @@ public class AuthService {
     }
 
     public User getUserInfoAndSave(String accessToken) {
+        String url = "https://api.github.com/user";
+
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
+        headers.setBearerAuth(accessToken); // ✅ Authorization: Bearer <token>
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
         ResponseEntity<Map> response = restTemplate.exchange(
-                "https://api.github.com/user",
+                url,
                 HttpMethod.GET,
                 request,
                 Map.class
