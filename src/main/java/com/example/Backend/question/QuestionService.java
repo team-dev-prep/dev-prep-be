@@ -20,8 +20,9 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
 
     @Transactional
-    public QuestionResponseDto createUserAndGetQuestions(QuestionRequestDto requestDto) { //TODO 2차 목표 진행 시 로그인으로 User 생성하도록 변경
-        User user = userRepository.save(new User());
+    public QuestionResponseDto getQuestionsForAuthenticatedUser(Long userId, QuestionRequestDto requestDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
         List<Question> personalityQuestions = questionRepository.findPersonalityQuestions(requestDto.getJobId(), requestDto.getPersonalityCount());
 
