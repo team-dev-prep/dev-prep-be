@@ -24,7 +24,11 @@ public class AuthApi {
     private final AuthService authService;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-
+    @Operation(summary = "GitHub OAuth Callback", description = "GitHub OAuth 흐름에서 콜백을 처리하고 JWT 토큰을 생성하고 쿠키를 설정합니다.")
+    @ApiResponses({
+                @ApiResponse(responseCode = "200", description = "Login successful"),
+                @ApiResponse(responseCode = "401", description = "Authentication failed")
+            })
     @GetMapping("/github/callback")
     public ResponseEntity<?> githubCallback(@RequestParam String code, HttpServletResponse response) {
         String accessToken = authService.getAccessToken(code);
@@ -45,6 +49,12 @@ public class AuthApi {
         return ResponseEntity.ok(Map.of("message", "Login success"));
     }
 
+    @Operation(summary = "GitHub Login", description = "GitHub OAuth 코드를 처리하여 사용자를 인증하고 JWT 토큰을 생성하며 쿠키를 설정합니다.")
+        @ApiResponses({
+                @ApiResponse(responseCode = "200", description = "Login successful"),
+                @ApiResponse(responseCode = "400", description = "Invalid request"),
+                @ApiResponse(responseCode = "401", description = "Authentication failed")
+            })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> payload, HttpServletResponse response) {
         String code = payload.get("code");
@@ -92,6 +102,10 @@ public class AuthApi {
         }
     }
 
+    @Operation(summary = "Logout", description = "access_token 및 refresh_token 쿠키를 지웁니다.")
+    @ApiResponses({
+                @ApiResponse(responseCode = "200", description = "Logout successful")
+            })
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         ResponseCookie expiredAccess = ResponseCookie.from("access_token", "")
@@ -105,6 +119,11 @@ public class AuthApi {
         return ResponseEntity.ok(Map.of("message", "Logout success"));
     }
 
+    @Operation(summary = "Reissue Access Token", description = "refresh_token 을 사용하여 access_token 을 다시 발급합니다.")
+        @ApiResponses({
+                @ApiResponse(responseCode = "200", description = "Access token reissued successfully"),
+                @ApiResponse(responseCode = "401", description = "Refresh token is missing or invalid")
+            })
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(
             @CookieValue(name = "refresh_token", required = false) String refreshToken,

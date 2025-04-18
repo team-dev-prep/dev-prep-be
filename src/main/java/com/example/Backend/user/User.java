@@ -17,8 +17,13 @@ public class User {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
+    @Column(unique = true)
     private String githubId;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String email;
     private String avatarUrl;
 }
