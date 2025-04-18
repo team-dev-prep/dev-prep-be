@@ -1,6 +1,7 @@
 package com.example.Backend.question;
 
 
+import com.example.Backend.config.JwtUtil;
 import com.example.Backend.dto.QuestionRequestDto;
 import com.example.Backend.dto.QuestionResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuestionApi {
 
     private final QuestionService questionService;
+    private final JwtUtil jwtUtil;
 
     @Operation(summary = "질문 가져오는 API", description = "인성과 기술 질문을 보내주면 수량에 맞게 질문을 보내줍니다.")
     @ApiResponses(value = {
@@ -25,8 +28,18 @@ public class QuestionApi {
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     @PostMapping("/question")
-    public QuestionResponseDto requestQuestions(@RequestBody QuestionRequestDto requestDto) {
-        return questionService.createUserAndGetQuestions(requestDto);
+    public ResponseEntity<?> requestQuestions(@RequestBody QuestionRequestDto requestDto,
+                                              @CookieValue(name = "access_token", required = false) String token) {
+        if (token == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token missing");
+
+        try {
+            String userId = jwtUtil.validateAndExtractSubject(token);
+            QuestionResponseDto responseDto = questionService.getQuestionsForAuthenticatedUser(Long.valueOf(userId), requestDto);
+            return ResponseEntity.ok(responseDto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 
     @Operation(summary = "질문 저장", description = "데이터 베이스 구축을 위한 질문 저장 API 입니다.")

@@ -19,6 +19,8 @@ bin/
 
 ### IntelliJ IDEA ###
 application-mysql.properties
+application-github.properties
+application-jwt.properties
 
 .idea
 *.iws
