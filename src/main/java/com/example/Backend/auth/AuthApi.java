@@ -38,10 +38,10 @@ public class AuthApi {
         String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
 
         ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccess)
-                .httpOnly(true).secure(false).sameSite("None").path("/").maxAge(1800).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(1800).build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefresh)
-                .httpOnly(true).secure(false).sameSite("None").path("/").maxAge(604800).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(604800).build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -60,10 +60,10 @@ public class AuthApi {
         String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
 
         ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccess)
-                .httpOnly(true).secure(false).sameSite("None").path("/").maxAge(1800).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(1800).build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefresh)
-                .httpOnly(true).secure(false).sameSite("None").path("/").maxAge(604800).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(604800).build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -88,10 +88,10 @@ public class AuthApi {
         String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
 
         ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccess)
-                .httpOnly(true).secure(true).path("/").maxAge(1800).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(1800).build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefresh)
-                .httpOnly(true).secure(true).path("/").maxAge(604800).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(604800).build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -131,9 +131,9 @@ public class AuthApi {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         ResponseCookie expiredAccess = ResponseCookie.from("access_token", "")
-                .httpOnly(true).secure(true).path("/").maxAge(0).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(0).build();
         ResponseCookie expiredRefresh = ResponseCookie.from("refresh_token", "")
-                .httpOnly(true).secure(true).path("/").maxAge(0).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(0).build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, expiredAccess.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, expiredRefresh.toString());
@@ -160,7 +160,7 @@ public class AuthApi {
             String newAccessToken = jwtUtil.generateAccessToken(userId);
 
             ResponseCookie accessCookie = ResponseCookie.from("access_token", newAccessToken)
-                    .httpOnly(true).secure(true).path("/").maxAge(1800).build();
+                    .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(1800).build();
 
             response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
             return ResponseEntity.ok(Map.of("message", "Access token reissued"));
