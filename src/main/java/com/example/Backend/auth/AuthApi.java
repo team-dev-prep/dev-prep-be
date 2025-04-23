@@ -6,6 +6,7 @@ import com.example.Backend.user.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -29,26 +30,6 @@ public class AuthApi {
                 @ApiResponse(responseCode = "200", description = "Login successful"),
                 @ApiResponse(responseCode = "401", description = "Authentication failed")
             })
-    @GetMapping("/github/callback")
-    public ResponseEntity<?> githubCallback(@RequestParam String code, HttpServletResponse response) {
-        String accessToken = authService.getAccessToken(code);
-        User user = authService.getUserInfoAndSave(accessToken);
-
-        String jwtAccess = jwtUtil.generateAccessToken(user.getId().toString());
-        String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
-
-        ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccess)
-                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(1800).build();
-
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefresh)
-                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(604800).build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-
-        return ResponseEntity.ok(Map.of("message", "Login success"));
-    }
-
     @PostMapping("/github/callback")
     public ResponseEntity<?> githubCallbackViaPost(@RequestBody Map<String, String> payload, HttpServletResponse response) {
         String code = payload.get("code");
@@ -59,14 +40,28 @@ public class AuthApi {
         String jwtAccess = jwtUtil.generateAccessToken(user.getId().toString());
         String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
 
-        ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccess)
-                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(1800).build();
+        Cookie accessCookie = new Cookie("access_token", jwtAccess);
+        accessCookie.setHttpOnly(true);
+        accessCookie.setSecure(true);
+        accessCookie.setPath("/");
+        accessCookie.setMaxAge(1800);
+        accessCookie.setDomain("devprep-official.store"); // 필요 시
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefresh)
-                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(604800).build();
+        Cookie refreshCookie = new Cookie("refresh_token", jwtRefresh);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(604800);
+        refreshCookie.setDomain("devprep-official.store"); // 필요 시
 
-        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        response.addHeader("Set-Cookie",
+                String.format("access_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=devprep-official.store",
+                        jwtAccess, 60 * 30));
+
+        response.addHeader("Set-Cookie",
+                String.format("refresh_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=devprep-official.store",
+                        jwtRefresh, 60 * 60 * 24 * 7));
+
 
         return ResponseEntity.ok(Map.of("message", "Login success"));
     }
