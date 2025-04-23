@@ -13,7 +13,11 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("https://devprep-official.vercel.app/")); // React dev server
+        config.setAllowedOriginPatterns(List.of(
+                "https://devprep-official.vercel.app",
+                "https://devprep-official.store"
+        ));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
