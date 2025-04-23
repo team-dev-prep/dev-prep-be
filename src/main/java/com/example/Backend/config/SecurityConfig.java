@@ -16,6 +16,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
+                                "/register",
                                 "/api/auth/github/callback",
                                 "/api/auth/me",
                                 "/api/auth/logout",
