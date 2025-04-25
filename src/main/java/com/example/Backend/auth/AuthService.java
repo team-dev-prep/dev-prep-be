@@ -61,7 +61,6 @@ public class AuthService {
         Map<String, Object> body = response.getBody();
         String githubId = String.valueOf(body.get("id"));
         String name = (String) body.get("name");
-        String email = (String) body.get("email");
         String avatar = (String) body.get("avatar_url");
 
         return userRepository.findByGithubId(githubId)
@@ -69,7 +68,6 @@ public class AuthService {
                         User.builder()
                                 .githubId(githubId)
                                 .name(name != null ? name : "unknown")
-                                .email(email != null ? email : "unknown@example.com")
                                 .avatarUrl(avatar)
                                 .build()
                 ));
