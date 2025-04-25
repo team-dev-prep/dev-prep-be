@@ -38,11 +38,11 @@ public class AuthApi {
             String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
 
             String accessCookie = String.format(
-                    "access_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=devprep-official.store",
+                    "access_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=.devprep-official.store",
                     jwtAccess, 60 * 180);
 
             String refreshCookie = String.format(
-                    "refresh_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=devprep-official.store",
+                    "refresh_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=.devprep-official.store",
                     jwtRefresh, 60 * 60 * 24 * 7);
 
             response.addHeader("Set-Cookie", accessCookie);
@@ -73,10 +73,12 @@ public class AuthApi {
         String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
 
         ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccess)
-                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(1800).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(1800)
+                .domain(".devprep-official.store").build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefresh)
-                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(604800).build();
+                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(604800)
+                .domain(".devprep-official.store").build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -120,6 +122,7 @@ public class AuthApi {
                 .sameSite("Strict")
                 .path("/")
                 .maxAge(0)
+                .domain(".devprep-official.store")
                 .build();
 
         ResponseCookie expiredRefresh = ResponseCookie.from("refresh_token", "")
@@ -128,6 +131,7 @@ public class AuthApi {
                 .sameSite("Strict")
                 .path("/")
                 .maxAge(0)
+                .domain(".devprep-official.store")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, expiredAccess.toString());
@@ -162,6 +166,7 @@ public class AuthApi {
                                 .sameSite("None")
                                 .path("/")
                                 .maxAge(60 * 180)
+                                .domain(".devprep-official.store")
                                 .build();
 
                         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
