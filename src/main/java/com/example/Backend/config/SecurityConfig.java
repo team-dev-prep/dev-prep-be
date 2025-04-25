@@ -19,6 +19,7 @@ public class SecurityConfig {
                                 "/register",
                                 "/api/auth/github/callback",
                                 "/api/auth/me",
+                                "/api/auth/refresh",
                                 "/api/auth/logout",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -28,7 +29,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .cors(cors -> {}); // CorsConfigurationSource Bean 자동 인식
+                .cors(cors -> {});
 
         return http.build();
     }

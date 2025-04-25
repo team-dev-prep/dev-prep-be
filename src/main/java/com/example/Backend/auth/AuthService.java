@@ -59,15 +59,19 @@ public class AuthService {
         );
 
         Map<String, Object> body = response.getBody();
+
         String githubId = String.valueOf(body.get("id"));
         String name = (String) body.get("name");
+        String login = (String) body.get("login");
         String avatar = (String) body.get("avatar_url");
+
+        String finalName = name != null ? name : login; // name 없으면 login 사용
 
         return userRepository.findByGithubId(githubId)
                 .orElseGet(() -> userRepository.save(
                         User.builder()
                                 .githubId(githubId)
-                                .name(name != null ? name : "unknown")
+                                .name(finalName)
                                 .avatarUrl(avatar)
                                 .build()
                 ));
