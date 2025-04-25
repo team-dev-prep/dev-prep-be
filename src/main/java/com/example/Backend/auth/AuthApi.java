@@ -25,6 +25,7 @@ public class AuthApi {
     private final AuthService authService;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    /*
     @Operation(summary = "GitHub OAuth Callback", description = "GitHub OAuth 흐름에서 콜백을 처리하고 JWT 토큰을 생성하고 쿠키를 설정합니다.")
     @ApiResponses({
                 @ApiResponse(responseCode = "200", description = "Login successful"),
@@ -64,6 +65,44 @@ public class AuthApi {
 
 
         return ResponseEntity.ok(Map.of("message", "Login success"));
+    }*/
+
+    @PostMapping("/github/callback")
+    public ResponseEntity<?> githubCallbackViaPost(@RequestBody Map<String, String> payload,
+                                                   HttpServletResponse response) {
+        try {
+            String code = payload.get("code");
+            System.out.println("✅ 받은 code: " + code);
+
+            String accessToken = authService.getAccessToken(code);
+            System.out.println("✅ GitHub access token 발급 성공");
+
+            User user = authService.getUserInfoAndSave(accessToken);
+            System.out.println("✅ 유저 정보 저장 완료: " + user.getId());
+
+            String jwtAccess = jwtUtil.generateAccessToken(user.getId().toString());
+            String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
+            System.out.println("✅ JWT 발급 완료");
+
+            String accessCookie = String.format(
+                    "access_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=devprep-official.store",
+                    jwtAccess, 60 * 30);
+
+            String refreshCookie = String.format(
+                    "refresh_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=devprep-official.store",
+                    jwtRefresh, 60 * 60 * 24 * 7);
+
+            response.addHeader("Set-Cookie", accessCookie);
+            response.addHeader("Set-Cookie", refreshCookie);
+            System.out.println("✅ Set-Cookie 응답 헤더 추가 완료");
+
+            return ResponseEntity.ok(Map.of("message", "Login success"));
+        } catch (Exception e) {
+            System.out.println("❌ 예외 발생: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "GitHub callback 처리 중 오류 발생"));
+        }
     }
 
     @Operation(summary = "GitHub Login", description = "GitHub OAuth 코드를 처리하여 사용자를 인증하고 JWT 토큰을 생성하며 쿠키를 설정합니다.")
