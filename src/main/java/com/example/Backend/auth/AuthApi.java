@@ -31,22 +31,38 @@ public class AuthApi {
         try {
             String code = payload.get("code");
 
+            if (code == null || code.isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Authorization code is missing"));
+            }
+
             String accessToken = authService.getAccessToken(code);
             User user = authService.getUserInfoAndSave(accessToken);
 
             String jwtAccess = jwtUtil.generateAccessToken(user.getId().toString());
             String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
 
-            String accessCookie = String.format(
-                    "access_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=.devprep-official.store",
-                    jwtAccess, 60 * 180);
+            // Access Token 쿠키 설정
+            ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccess)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(60 * 60 * 3)  // 3시간
+                    .domain("devprep-official.store")
+                    .build();
 
-            String refreshCookie = String.format(
-                    "refresh_token=%s; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=%d; Domain=.devprep-official.store",
-                    jwtRefresh, 60 * 60 * 24 * 7);
+            // Refresh Token 쿠키 설정
+            ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefresh)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(60 * 60 * 24 * 7)  // 7일
+                    .domain("devprep-official.store")
+                    .build();
 
-            response.addHeader("Set-Cookie", accessCookie);
-            response.addHeader("Set-Cookie", refreshCookie);
+            response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
             return ResponseEntity.ok(Map.of("message", "Login success"));
         } catch (Exception e) {
@@ -54,36 +70,6 @@ public class AuthApi {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "GitHub callback 처리 중 오류 발생"));
         }
-    }
-
-    @Operation(summary = "GitHub Login", description = "GitHub OAuth 코드를 처리하여 사용자를 인증하고 JWT 토큰을 생성하며 쿠키를 설정합니다.")
-        @ApiResponses({
-                @ApiResponse(responseCode = "200", description = "Login successful"),
-                @ApiResponse(responseCode = "400", description = "Invalid request"),
-                @ApiResponse(responseCode = "401", description = "Authentication failed")
-            })
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> payload, HttpServletResponse response) {
-        String code = payload.get("code");
-
-        String githubAccessToken = authService.getAccessToken(code);
-        User user = authService.getUserInfoAndSave(githubAccessToken);
-
-        String jwtAccess = jwtUtil.generateAccessToken(user.getId().toString());
-        String jwtRefresh = jwtUtil.generateRefreshToken(user.getId().toString());
-
-        ResponseCookie accessCookie = ResponseCookie.from("access_token", jwtAccess)
-                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(1800)
-                .domain(".devprep-official.store").build();
-
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", jwtRefresh)
-                .httpOnly(true).secure(true).sameSite("None").path("/").maxAge(604800)
-                .domain(".devprep-official.store").build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-
-        return ResponseEntity.ok(Map.of("message", "Login success"));
     }
 
     @Operation(summary = "로그인된 유저 정보 조회", description = "access_token 쿠키가 유효하면 로그인한 유저의 정보를 반환합니다.")
@@ -121,8 +107,8 @@ public class AuthApi {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(0)
-                .domain(".devprep-official.store")
+                .maxAge(0)  // 만료시간을 0으로 설정하여 삭제
+                .domain("devprep-official.store")
                 .build();
 
         ResponseCookie expiredRefresh = ResponseCookie.from("refresh_token", "")
@@ -130,8 +116,8 @@ public class AuthApi {
                 .secure(true)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(0)
-                .domain(".devprep-official.store")
+                .maxAge(0)  // 만료시간을 0으로 설정하여 삭제
+                .domain("devprep-official.store")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, expiredAccess.toString());
@@ -165,8 +151,8 @@ public class AuthApi {
                                 .secure(true)
                                 .sameSite("None")
                                 .path("/")
-                                .maxAge(60 * 180)
-                                .domain(".devprep-official.store")
+                                .maxAge(60 * 180)  // 3시간
+                                .domain("devprep-official.store")
                                 .build();
 
                         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
@@ -179,6 +165,4 @@ public class AuthApi {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
     }
-
-
 }
