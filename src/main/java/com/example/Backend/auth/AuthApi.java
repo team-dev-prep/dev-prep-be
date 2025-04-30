@@ -105,7 +105,7 @@ public class AuthApi {
         ResponseCookie expiredAccess = ResponseCookie.from("access_token", "")
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path("/")
                 .maxAge(0)  // 만료시간을 0으로 설정하여 삭제
                 .domain("devprep-official.store")
@@ -114,7 +114,7 @@ public class AuthApi {
         ResponseCookie expiredRefresh = ResponseCookie.from("refresh_token", "")
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .path("/")
                 .maxAge(0)  // 만료시간을 0으로 설정하여 삭제
                 .domain("devprep-official.store")
