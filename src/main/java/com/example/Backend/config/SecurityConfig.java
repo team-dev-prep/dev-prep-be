@@ -16,11 +16,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
-                                "/register",
                                 "/api/auth/github/callback",
                                 "/api/auth/me",
                                 "/api/auth/refresh",
                                 "/api/auth/logout",
+                                "/api/register",
+                                "/api/prequestion",
+                                "/api/question",
+                                "/api/answers",
+                                "/api/result",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

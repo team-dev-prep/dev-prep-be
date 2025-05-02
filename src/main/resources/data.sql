@@ -1,5 +1,5 @@
 -- 인성 질문 (personality = 1, jobId = 0, time = 300)
-INSERT INTO question (personality, jobId, time, Question, modelAnswer) VALUES
+INSERT INTO question (personality, jobId, time, question, modelAnswer) VALUES
 (1, 0, 300, '자신의 장점을 말해주세요.', '저는 어려운 상황에서도 끝까지 책임을 지며 팀의 목표를 이루기 위해 노력하는 태도를 가지고 있으며, 맡은 일은 미루지 않고 꾸준히 실천하며 끝마치는 습관이 있습니다.'),
 (1, 0, 300, '자신의 단점을 말해주세요.', '저는 완벽하게 준비하려는 성향이 있어 가끔 실행에 옮기는 속도가 느릴 수 있습니다. 이를 보완하기 위해 우선순위를 나누어 실행과 검토를 병행하고 있습니다.'),
 (1, 0, 300, '스트레스를 어떻게 관리하시나요?', '스트레스 상황에서는 문제의 원인을 정리하고, 산책이나 운동 같은 활동으로 생각을 환기시킨 뒤 다시 문제를 차분히 접근합니다.'),
@@ -12,7 +12,7 @@ INSERT INTO question (personality, jobId, time, Question, modelAnswer) VALUES
 (1, 0, 300, '실패를 극복한 경험은?', '처음 진행한 프로젝트에서 기술 선택 실수로 많은 리팩토링이 필요했지만 원인을 분석하고 구조를 재설계하여 성공적으로 마무리했습니다.');
 
 -- 프론트엔드 기술 질문 (personality = 0, jobId = 0, time = 600)
-INSERT INTO question (personality, jobId, time, Question, modelAnswer) VALUES
+INSERT INTO question (personality, jobId, time, question, modelAnswer) VALUES
 (0, 0, 600, 'React에서 상태 관리는 어떻게 하나요?', 'React에서는 useState, useReducer, Context API 또는 Redux와 같은 외부 상태관리 도구를 활용하여 컴포넌트 간 상태 공유 및 관리가 가능합니다.'),
 (0, 0, 600, 'CSR과 SSR의 차이는?', 'CSR은 클라이언트에서 렌더링을 수행하는 방식이고, SSR은 서버에서 HTML을 만들어 클라이언트에 전달하는 방식으로 초기 로딩 속도와 SEO 측면에서 차이가 있습니다.'),
 (0, 0, 600, 'useEffect의 역할은?', 'useEffect는 React 컴포넌트가 렌더링된 후 특정 작업을 수행하도록 하며, 주로 API 호출, 구독 설정, 타이머 설정 등에 사용됩니다.'),
@@ -25,7 +25,7 @@ INSERT INTO question (personality, jobId, time, Question, modelAnswer) VALUES
 (0, 0, 600, 'React에서 비동기 작업을 처리하는 방법은?', 'useEffect 안에서 fetch 또는 axios를 사용해 비동기 작업을 처리하고, async/await 문법과 상태 업데이트를 통해 결과를 반영합니다.');
 
 -- 백엔드 기술 질문 (personality = 0, jobId = 1, time = 600)
-INSERT INTO question (personality, jobId, time, Question, modelAnswer) VALUES
+INSERT INTO question (personality, jobId, time, question, modelAnswer) VALUES
 (0, 1, 600, 'Spring에서 의존성 주입은 무엇인가요?', 'Spring은 DI 컨테이너를 통해 객체 간 의존성을 주입하며, 이를 통해 유연하고 테스트 가능한 구조를 지원합니다. 주로 생성자 주입 방식이 권장됩니다.'),
 (0, 1, 600, 'JPA에서 N+1 문제는 무엇인가요?', 'N+1 문제는 연관된 엔티티를 지연 로딩하면서 쿼리가 반복 발생하는 현상이며, fetch join이나 EntityGraph로 해결할 수 있습니다.'),
 (0, 1, 600, 'Spring에서 @Transactional의 역할은?', '@Transactional은 하나의 메서드 안에서 수행되는 DB 작업을 하나의 트랜잭션으로 묶어 원자성을 보장하며, 롤백 처리를 가능하게 합니다.'),

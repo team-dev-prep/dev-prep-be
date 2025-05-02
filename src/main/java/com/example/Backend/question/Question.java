@@ -23,7 +23,7 @@ public class Question {
     @Column(name = "time", nullable = false)
     private Long time;
 
-    @Column(name = "Question", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "question", nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
     @Column(name = "modelAnswer", nullable = false, columnDefinition = "LONGTEXT")
