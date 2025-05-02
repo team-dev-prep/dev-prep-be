@@ -10,17 +10,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class QuestionApi {
 
     private final QuestionService questionService;
     private final JwtUtil jwtUtil;
+
+    @PostMapping("/prequestion")
+    @Operation(
+            summary = "비로그인용 질문 제공 API",
+            description = "로그인하지 않은 사용자에게 인성 질문 1개와 기술 질문 1개를 랜덤으로 제공합니다."
+    )
+    public PreQuestionResponseDto getPreQuestions(@RequestBody PreQuestionRequestDto requestDto) {
+        return questionService.getPreQuestions(requestDto.getJobId());
+    }
 
     @Operation(summary = "질문 가져오는 API", description = "인성과 기술 질문을 보내주면 수량에 맞게 질문을 보내줍니다.")
     @ApiResponses(value = {

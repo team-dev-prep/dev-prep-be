@@ -20,6 +20,22 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
 
     @Transactional
+    public PreQuestionResponseDto getPreQuestions(Long jobId) {
+        List<Question> personality = questionRepository.findPersonalityQuestions(jobId, 1);
+        List<Question> tech = questionRepository.findTechQuestions(jobId, 1);
+
+        List<QuestionDto> questionDtos = personality.stream()
+                .map(q -> new QuestionDto(q.getId(), q.getTime(), q.getContent()))
+                .collect(Collectors.toList());
+
+        questionDtos.addAll(tech.stream()
+                .map(q -> new QuestionDto(q.getId(), q.getTime(), q.getContent()))
+                .toList());
+
+        return new PreQuestionResponseDto(questionDtos.size(), questionDtos);
+    }
+
+    @Transactional
     public QuestionResponseDto getQuestionsForAuthenticatedUser(Long userId, QuestionRequestDto requestDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
