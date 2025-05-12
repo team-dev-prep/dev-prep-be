@@ -1,6 +1,5 @@
-package com.example.Backend.question;
+package com.example.Backend.dto;
 
-import com.example.Backend.dto.QuestionDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class PreQuestionResponseDto {
     private int total;
-    private List<QuestionDto> questions;
+    private List<PreQuestionDto> questions;
 }

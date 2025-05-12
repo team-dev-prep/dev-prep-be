@@ -2,6 +2,8 @@ package com.example.Backend.question;
 
 
 import com.example.Backend.config.JwtUtil;
+import com.example.Backend.dto.PreQuestionRequestDto;
+import com.example.Backend.dto.PreQuestionResponseDto;
 import com.example.Backend.dto.QuestionRequestDto;
 import com.example.Backend.dto.QuestionResponseDto;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,8 +1,6 @@
 package com.example.Backend.question;
 
-import com.example.Backend.dto.QuestionDto;
-import com.example.Backend.dto.QuestionRequestDto;
-import com.example.Backend.dto.QuestionResponseDto;
+import com.example.Backend.dto.*;
 import com.example.Backend.user.User;
 import com.example.Backend.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -24,12 +22,12 @@ public class QuestionService {
         List<Question> personality = questionRepository.findPersonalityQuestions(jobId, 1);
         List<Question> tech = questionRepository.findTechQuestions(jobId, 1);
 
-        List<QuestionDto> questionDtos = personality.stream()
-                .map(q -> new QuestionDto(q.getId(), q.getTime(), q.getContent()))
+        List<PreQuestionDto> questionDtos = personality.stream()
+                .map(q -> new PreQuestionDto(q.getId(), q.getTime(), q.getContent(), q.getModelAnswer()))
                 .collect(Collectors.toList());
 
         questionDtos.addAll(tech.stream()
-                .map(q -> new QuestionDto(q.getId(), q.getTime(), q.getContent()))
+                .map(q -> new PreQuestionDto(q.getId(), q.getTime(), q.getContent(), q.getModelAnswer()))
                 .toList());
 
         return new PreQuestionResponseDto(questionDtos.size(), questionDtos);

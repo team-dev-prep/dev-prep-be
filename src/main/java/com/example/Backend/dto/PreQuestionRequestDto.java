@@ -1,4 +1,4 @@
-package com.example.Backend.question;
+package com.example.Backend.dto;
 
 import lombok.Getter;
 
