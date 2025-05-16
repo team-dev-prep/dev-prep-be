@@ -16,4 +16,7 @@ public class AnswerRequestDto {
 
     @Schema(description = "사용자가 작성한 답변", example = "3번 질문에 대한 답안입니다.")
     private String userAnswer;
+
+    @Schema(description = "인터뷰 ID", example = "5")
+    private Long interviewId;
 }

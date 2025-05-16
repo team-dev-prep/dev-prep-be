@@ -15,8 +15,8 @@ public class ResultService {
 
     private final AnswerRepository answerRepository;
 
-    public ResultResponseDto getUserResults(Long userId) {
-        List<Answer> answers = answerRepository.findByUserId(userId);
+    public ResultResponseDto getUserResults(Long interviewId, Long userId) {
+        List<Answer> answers = answerRepository.findByInterviewId(interviewId);
 
         List<ResultDto> result = answers.stream()
                 .map(answer -> new ResultDto(

@@ -1,6 +1,8 @@
 package com.example.Backend.question;
 
 import com.example.Backend.dto.*;
+import com.example.Backend.interview.Interview;
+import com.example.Backend.interview.InterviewRepository;
 import com.example.Backend.user.User;
 import com.example.Backend.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -16,6 +18,7 @@ public class QuestionService {
 
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
+    private final InterviewRepository interviewRepository;
 
     @Transactional
     public PreQuestionResponseDto getPreQuestions(Long jobId) {
@@ -38,8 +41,9 @@ public class QuestionService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
-        List<Question> personalityQuestions = questionRepository.findPersonalityQuestions(0L, requestDto.getPersonalityCount());
+        Interview interview = interviewRepository.save(new Interview(user));
 
+        List<Question> personalityQuestions = questionRepository.findPersonalityQuestions(requestDto.getJobId(), requestDto.getPersonalityCount());
         List<Question> techQuestions = questionRepository.findTechQuestions(requestDto.getJobId(), requestDto.getTechCount());
 
         List<QuestionDto> questionDtos = personalityQuestions.stream()
@@ -50,7 +54,7 @@ public class QuestionService {
                 .map(q -> new QuestionDto(q.getId(), q.getTime(), q.getContent()))
                 .toList());
 
-        return new QuestionResponseDto(user.getId(), requestDto.getPersonalityCount() + requestDto.getTechCount(), questionDtos);
+        return new QuestionResponseDto(user.getId(), interview.getId(), questionDtos.size(), questionDtos);
     }
 
     public Question saveQuestion(Question question) { //TODO 2차 목표 진행 시 데이터베이스 만들 때 사용 예정

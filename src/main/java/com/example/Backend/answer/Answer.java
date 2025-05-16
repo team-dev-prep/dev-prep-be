@@ -1,5 +1,6 @@
 package com.example.Backend.answer;
 
+import com.example.Backend.interview.Interview;
 import com.example.Backend.question.Question;
 import com.example.Backend.user.User;
 import jakarta.persistence.*;
@@ -32,15 +33,20 @@ public class Answer {
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "interview_id", nullable = false)
+    private Interview interview;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = new java.util.Date();
     }
 
-    public Answer(User user, Question question, String userAnswer) {
+    public Answer(User user, Question question, String userAnswer, Interview interview) {
         this.user = user;
         this.question = question;
         this.userAnswer = userAnswer;
+        this.interview = interview;
         this.createdAt = new java.util.Date();
     }
 }

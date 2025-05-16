@@ -1,8 +1,11 @@
 package com.example.Backend.user;
 
-import jakarta.persistence.Entity;
+import com.example.Backend.interview.Interview;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,4 +28,7 @@ public class User {
 
     @Column(nullable = false)
     private String avatarUrl;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Interview> interviews = new ArrayList<>();
 }

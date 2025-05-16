@@ -2,7 +2,6 @@ package com.example.Backend.result;
 
 import com.example.Backend.dto.ResultResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,9 @@ public class ResultApi {
     })
     @GetMapping("/result")
     public ResponseEntity<ResultResponseDto> getResult(
-            @Parameter(description = "사용자 ID", example = "1") @RequestParam Long userId) {
-        ResultResponseDto results = resultService.getUserResults(userId);
+            @RequestParam Long interviewId,
+            @RequestParam Long userId) {
+        ResultResponseDto results = resultService.getUserResults(interviewId, userId);
         return ResponseEntity.ok(results);
     }
 }

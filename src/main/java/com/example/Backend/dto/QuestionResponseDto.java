@@ -9,6 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 public class QuestionResponseDto {
     private Long userId;
+    private Long interviewId;
     private int totalCount;
     private List<QuestionDto> questions;
 }
