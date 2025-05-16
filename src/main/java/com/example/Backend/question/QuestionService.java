@@ -43,7 +43,7 @@ public class QuestionService {
 
         Interview interview = interviewRepository.save(new Interview(user));
 
-        List<Question> personalityQuestions = questionRepository.findPersonalityQuestions(requestDto.getJobId(), requestDto.getPersonalityCount());
+        List<Question> personalityQuestions = questionRepository.findPersonalityQuestions(0L, requestDto.getPersonalityCount());
         List<Question> techQuestions = questionRepository.findTechQuestions(requestDto.getJobId(), requestDto.getTechCount());
 
         List<QuestionDto> questionDtos = personalityQuestions.stream()
